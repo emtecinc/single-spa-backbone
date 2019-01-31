@@ -1,0 +1,12 @@
+# Build directory
+lib/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Logs
+*.log
+
+# vs code
+.vscode/

@@ -1,0 +1,40 @@
+{
+  "name": "@emtec/single-spa-backbone",
+  "version": "1.0.0",
+  "description": "a single spa plugin for backbone.js apps",
+  "main": "lib/single-spa-backbone.js",
+  "scripts": {
+    "build": "rimraf lib && mkdir lib && babel src/single-spa-backbone.js --out-file lib/single-spa-backbone.js --source-maps && babel src/single-spa-backbone-loader.js --out-file lib/single-spa-backbone-loader.js --source-maps && babel src/single-spa-backbone-unloader.js --out-file lib/single-spa-backbone-unloader.js --source-maps",
+    "test": "jest --config jest.json"
+  },
+  "keywords": [
+    "single",
+    "page",
+    "application",
+    "spa",
+    "multi",
+    "backbone",
+    "backbonejs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emtecinc/single-spa-backbone.git"
+  },
+  "author": "Emtec Inc",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/emtecinc/single-spa-backbone/issues"
+  },
+  "homepage": "https://github.com/emtecinc/single-spa-backbone#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-jest": "^23.0.0-alpha.0",
+    "jest": "^23.6.0",
+    "jest-cli": "^23.6.0",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.3"
+  }
+}
