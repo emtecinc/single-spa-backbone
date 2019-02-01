@@ -128,7 +128,7 @@ function mount(options) {
 
 	promise.then(function (result) {
 		if (result)
-			options.ScriptElement = result;
+			options.ScriptElementRef = result;
 	});
 	return promise;
 }
