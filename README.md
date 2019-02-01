@@ -20,7 +20,7 @@ Examples can be found in the [single-spa-examples](https://github.com/emtecinc/s
 First, in the [single-spa application](https://github.com/CanopyTax/single-spa/blob/master/docs/applications.md#registered-applications), run `npm install --save @emtec/single-spa-backbone`. Then, create an entry file for application like below, assuming the application has some `BasePath` with `AppPath` and `RequireJsPath' being relative to the base path.
 
 ```js
-import singleSpaBackbone from '@emtec/single-spa-backbone';
+import singleSpaBackbone from '@emtecinc/single-spa-backbone';
 
 const backBoneLifecycles = singleSpaBackbone({
 	BasePath: 'appBasePath',
@@ -69,7 +69,7 @@ Please note that this hook up is just a setter and don't expect you to return a 
 `IsDataMain` will be set to `false` in this case
 
 ```js
-import singleSpaBackbone from '@emtec/single-spa-backbone';
+import singleSpaBackbone from '@emtecinc/single-spa-backbone';
 
 const backBoneLifecycles = singleSpaBackbone({
 	BasePath: 'appBasePath',
