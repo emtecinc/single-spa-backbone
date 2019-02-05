@@ -33,9 +33,11 @@ export function loadBackboneAppWithRequireJs(basePath, appOptions, scriptElement
 
 			if (scriptElementRef && document.head.hasChildNodes(scriptElementRef)) {
 				try {
-					if (!Backbone.History.started)
-						Backbone.history.start();
-					Backbone.history.navigate(basePath, true);
+					if (Backbone) {
+						if (!Backbone.History.started)
+							Backbone.history.start();
+						Backbone.history.navigate(basePath, true);
+					}
 				}
 				catch (err) {
 					reject(err);
@@ -69,9 +71,11 @@ export function loadBackboneAppSimple(basePath, appOptions, scriptElementRef, ca
 
 			if (scriptElementRef && document.head.hasChildNodes(scriptElementRef)) {
 				try {
-					if (!Backbone.History.started)
-						Backbone.history.start();
-					Backbone.history.navigate(basePath, true);
+					if (Backbone) {
+						if (!Backbone.History.started)
+							Backbone.history.start();
+						Backbone.history.navigate(basePath, true);
+					}
 				}
 				catch (err) {
 					reject(err);
