@@ -32,8 +32,8 @@ describe(`test scope for single-spa-backbone`, () => {
         expect(() => singleSpaBackbone({})).toThrowError('BasePath parameter is required');
         expect(() => singleSpaBackbone({ BasePath: null })).toThrowError('BasePath parameter is required');
         expect(() => singleSpaBackbone({ BasePath: '' })).toThrowError('BasePath parameter is required');
-        expect(() => singleSpaBackbone({ BasePath: '/' })).toThrowError('Either AppWithRequire or AppSimple parameter need to be passed');
-        expect(() => singleSpaBackbone({ BasePath: basePath, AppWithRequire: {}, AppSimple: {} })).toThrowError('Either AppWithRequire or AppSimple parameter can be passed at a time');
+        expect(() => singleSpaBackbone({ BasePath: '/' })).toThrowError('App or AppWithRequire or AppWithBackboneJs parameter need to be passed');
+        expect(() => singleSpaBackbone({ BasePath: basePath, AppWithRequire: {}, AppWithBackboneJs: {} })).toThrowError('App or AppWithRequire or AppWithBackboneJs parameter can be passed at a time');
         expect(() => singleSpaBackbone({ BasePath: basePath, AppWithRequire: 'app' })).toThrowError('AppWithRequire parameter is expecting an object which is not supplied. It needs IsDataMain, AppPath, RequireJsPath parameter and optionally DependenciesJsPaths');
         expect(() => singleSpaBackbone({ BasePath: basePath, AppWithRequire: {} })).toThrowError('AppWithRequire.IsDataMain parameter is required and expects a boolean value');
         expect(() => singleSpaBackbone({ BasePath: basePath, AppWithRequire: { IsDataMain: true } })).toThrowError('AppWithRequire.AppPath parameter is required and expects a string value');
@@ -42,19 +42,22 @@ describe(`test scope for single-spa-backbone`, () => {
         expect(() => singleSpaBackbone({ BasePath: basePath, AppWithRequire: { IsDataMain: true, AppPath: {} } })).toThrowError('AppWithRequire.AppPath parameter is required and expects a string value');
         expect(() => singleSpaBackbone({ BasePath: basePath, AppWithRequire: { IsDataMain: true, AppPath: appPath, RequireJsPath: {} } })).toThrowError('AppWithRequire.RequireJsPath parameter is required and expects a string value');
         expect(() => singleSpaBackbone({ BasePath: basePath, AppWithRequire: { IsDataMain: true, AppPath: appPath, RequireJsPath: 'requireJsPath', DependenciesJsPaths: {} } })).toThrowError('AppWithRequire.DependenciesJsPaths parameter expects an array');
-        expect(() => singleSpaBackbone({ BasePath: basePath, AppSimple: 'app' })).toThrowError('AppSimple parameter is expecting an object which is not supplied. It needs AppPath, BackboneJsPath and optionally DependenciesJsPaths');
-        expect(() => singleSpaBackbone({ BasePath: basePath, AppSimple: {} })).toThrowError('AppSimple.AppPath parameter is required and expects a string value');
-        expect(() => singleSpaBackbone({ BasePath: basePath, AppSimple: { AppPath: {} } })).toThrowError('AppSimple.AppPath parameter is required and expects a string value');
-        expect(() => singleSpaBackbone({ BasePath: basePath, AppSimple: { AppPath: appPath } })).toThrowError('AppSimple.BackboneJsPath parameter is required and expects a string value');
-        expect(() => singleSpaBackbone({ BasePath: basePath, AppSimple: { AppPath: appPath, BackboneJsPath: {} } })).toThrowError('AppSimple.BackboneJsPath parameter is required and expects a string value');
-        expect(() => singleSpaBackbone({ BasePath: basePath, AppSimple: { AppPath: appPath, BackboneJsPath: 'backboneJsPath', DependenciesJsPaths: {} } })).toThrowError('AppSimple.DependenciesJsPaths parameter expects an array');
+        expect(() => singleSpaBackbone({ BasePath: basePath, AppWithBackboneJs: 'app' })).toThrowError('AppWithBackboneJs parameter is expecting an object which is not supplied. It needs AppPath, BackboneJsPath and optionally DependenciesJsPaths');
+        expect(() => singleSpaBackbone({ BasePath: basePath, AppWithBackboneJs: {} })).toThrowError('AppWithBackboneJs.AppPath parameter is required and expects a string value');
+        expect(() => singleSpaBackbone({ BasePath: basePath, AppWithBackboneJs: { AppPath: {} } })).toThrowError('AppWithBackboneJs.AppPath parameter is required and expects a string value');
+        expect(() => singleSpaBackbone({ BasePath: basePath, AppWithBackboneJs: { AppPath: appPath } })).toThrowError('AppWithBackboneJs.BackboneJsPath parameter is required and expects a string value');
+        expect(() => singleSpaBackbone({ BasePath: basePath, AppWithBackboneJs: { AppPath: appPath, BackboneJsPath: {} } })).toThrowError('AppWithBackboneJs.BackboneJsPath parameter is required and expects a string value');
+        expect(() => singleSpaBackbone({ BasePath: basePath, AppWithBackboneJs: { AppPath: appPath, BackboneJsPath: 'backboneJsPath', DependenciesJsPaths: {} } })).toThrowError('AppWithBackboneJs.DependenciesJsPaths parameter expects an array');
+        expect(() => singleSpaBackbone({ BasePath: basePath, App: 'app' })).toThrowError('App parameter is expecting an object which is not supplied. It needs AppPath');
+        expect(() => singleSpaBackbone({ BasePath: basePath, App: {} })).toThrowError('App.AppPath parameter is required and expects a string value');
+        expect(() => singleSpaBackbone({ BasePath: basePath, App: { AppPath: {} } })).toThrowError('App.AppPath parameter is required and expects a string value');
     });
 
     test(`returns script element if valid props are passed to single spa backbone for simple app`, () => {
 
         let backboneJsPath = 'backboneJsPath';
         let expectedSrcPath = `http://localhost${basePath}/${appPath}`;
-        let options = { BasePath: basePath, AppSimple: { AppPath: appPath, BackboneJsPath: backboneJsPath } };
+        let options = { BasePath: basePath, AppWithBackboneJs: { AppPath: appPath, BackboneJsPath: backboneJsPath } };
         const lifeCycleSpa = singleSpaBackbone(options);
         return lifeCycleSpa
             .mount()
