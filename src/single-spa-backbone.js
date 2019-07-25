@@ -59,9 +59,9 @@ export default function singleSpaBackbone(userOptions) {
         }
     }
 
-    if (options.AppWithRequire && options.AppWithBackboneJs
-        || options.AppWithRequire && options.App
-        || options.App && options.AppWithBackboneJs) {
+    if ((options.AppWithRequire && options.AppWithBackboneJs)
+        || (options.AppWithRequire && options.App)
+        || (options.App && options.AppWithBackboneJs)) {
         throw new Error(`Either App or AppWithRequire or AppWithBackboneJs parameter can be passed at a time`);
     }
 

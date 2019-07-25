@@ -4,14 +4,15 @@ A plugin which provides life cycle events for building [single-spa](https://gith
 [![npm Package](https://img.shields.io/npm/v/@emtecinc/single-spa-backbone.svg)](https://www.npmjs.com/package/@emtecinc/single-spa-backbone)
 [![License](https://img.shields.io/npm/l/@emtecinc/single-spa-backbone.svg)](https://github.com/emtecinc/single-spa-backbone/blob/master/LICENSE)
 
-There are mostly two styles of creating backbone applications
+There are mostly three styles of creating backbone applications
 
-1. Using [RequreJS](https://requirejs.org/) which will loads the application and all it's dependencies, including the templates loaded using [Handlebars](https://handlebarsjs.com/), [RequireJS:Text](https://github.com/requirejs/text) or any other engine. 
+1. Using [RequireJS](https://requirejs.org/) which will loads the application and all it's dependencies, including the templates loaded using [Handlebars](https://handlebarsjs.com/), [RequireJS:Text](https://github.com/requirejs/text) or any other engine. 
 
    If your applicatioin is written using this style, then you will have to pass the `AppWithRequire` parameter as otions in the plugin, and choose the flavour to load the app, either through `data-main` attribute or without it.
 
 2. Using [Backbone](http://backbonejs.org/) and ApplicationPath (Entry point of application) directly as script elements and optionally loading other dependencies.
 
+3. Loading a single application bundle which includes application dependencies like i.e. Backbone, Require, Underscore, Jquery etc. 
 
 ## Example
 Examples can be found in the [single-spa-examples](https://github.com/emtecinc/single-spa-samples) repository.
@@ -76,11 +77,51 @@ import singleSpaBackbone from '@emtecinc/single-spa-backbone';
 
 const backBoneLifecycles = singleSpaBackbone({
 	BasePath: 'appBasePath',
-	AppWithRequire:
+	AppWithBackboneJs:
 	{
-		IsDataMain: false,
 		AppPath: 'src/app',
-		RequireJsPath: 'lib/require.js'
+		BackboneJsPath: 'lib/backbone.js'
+	},
+	DomElementSetter: domElementSetter
+});
+
+export const bootstrap = [
+	backBoneLifecycles.bootstrap,
+];
+
+export const mount = [
+	backBoneLifecycles.mount,
+];
+
+export const unmount = [
+	backBoneLifecycles.unmount,
+];
+
+
+function domElementSetter() {
+
+	//use the same element id to render into, in the backbone app
+	let el = document.getElementById('shell-container');
+	if (!el) {
+		el = document.createElement('div');
+		el.id = 'shell-container';
+		document.body.appendChild(el);
+	}
+
+}
+```
+
+**Option 3** : Load Backbone app using production build
+
+
+```js
+import singleSpaBackbone from '@emtecinc/single-spa-backbone';
+
+const backBoneLifecycles = singleSpaBackbone({
+	BasePath: 'appBasePath',
+	App:
+	{
+		AppPath: 'src/app'
 	},
 	DomElementSetter: domElementSetter
 });
