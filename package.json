@@ -28,14 +28,15 @@
   },
   "homepage": "https://github.com/emtecinc/single-spa-backbone#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-jest": "^23.0.0-alpha.0",
-    "jest": "^23.6.0",
-    "jest-cli": "^23.6.0",
+    "@babel/cli": "^7.13.0",
+    "@babel/core": "^7.13.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.13.0",
+    "@babel/plugin-transform-modules-umd": "^7.13.0",
+    "@babel/preset-env": "^7.13.5",
+    "babel-jest": "^26.6.3",
+    "jest": "^26.6.3",
+    "jest-cli": "^26.6.3",
     "mkdirp": "^0.5.1",
-    "rimraf": "^2.6.3"
+    "rimraf": "^2.7.1"
   }
 }

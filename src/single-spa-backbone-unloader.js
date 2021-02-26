@@ -20,11 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-export default function unloadBackboneApp() {
+export default function unloadBackboneApp(options) {
     return new Promise((resolve, reject) => {
         try {
             if (Backbone && Backbone.History.started)
                 Backbone.history.stop();
+            if(window.requirejs && options.CleanUpRequireJsResources)
+                unloadRequireJsResources();
             resolve();
         }
         catch (err) {

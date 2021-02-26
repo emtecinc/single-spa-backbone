@@ -25,6 +25,8 @@ import unloadBackboneApp from './single-spa-backbone-unloader';
 
 const defaultOptions = {
     BasePath: null,
+    StartBackboneHistory: false,
+    CleanUpRequireJsResources: true,
     App: null,
     AppWithRequire: null,
     AppWithBackboneJs: null,
@@ -135,11 +137,11 @@ function bootstrap(options) {
 function mount(options) {
     var promise = null;
     if (options.AppWithRequire)
-        promise = loadBackboneAppWithRequireJs(options.BasePath, options.AppWithRequire, options.ScriptElementRef, options.DomElementSetter);
+        promise = loadBackboneAppWithRequireJs(options.BasePath, options.StartBackboneHistory, options.CleanUpRequireJsResources, options.AppWithRequire, options.ScriptElementRef, options.DomElementSetter);
     else if (options.AppWithBackboneJs)
-        promise = loadAppWithBackboneJs(options.BasePath, options.AppWithBackboneJs, options.ScriptElementRef, options.DomElementSetter);
+        promise = loadAppWithBackboneJs(options.BasePath, options.StartBackboneHistory, options.CleanUpRequireJsResources, options.AppWithBackboneJs, options.ScriptElementRef, options.DomElementSetter);
     else if (options.App)
-        promise = loadAppSimple(options.BasePath, options.App, options.ScriptElementRef, options.DomElementSetter);
+        promise = loadAppSimple(options.BasePath, options.StartBackboneHistory, options.CleanUpRequireJsResources, options.App, options.ScriptElementRef, options.DomElementSetter);
 
     promise.then(function (result) {
         if (result)
@@ -149,5 +151,5 @@ function mount(options) {
 }
 
 function unmount(options) {
-    return unloadBackboneApp();
+    return unloadBackboneApp(options);
 }

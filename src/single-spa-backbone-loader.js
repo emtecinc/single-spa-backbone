@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 //Loads a backbone application using require js
-export function loadBackboneAppWithRequireJs(basePath, appOptions, scriptElementRef, callbackDomElementSetter) {
+export function loadBackboneAppWithRequireJs(basePath,startBackboneHistory,CleanUpRequireJsResources, appOptions, scriptElementRef, callbackDomElementSetter) {
     return new Promise((resolve, reject) => {
 
         if (callbackDomElementSetter)
@@ -31,7 +31,7 @@ export function loadBackboneAppWithRequireJs(basePath, appOptions, scriptElement
 
         function loadApp() {
 
-            if (scriptElementRef && document.head.hasChildNodes(scriptElementRef)) {
+            if (startBackboneHistory && scriptElementRef && document.head.hasChildNodes(scriptElementRef)) {
                 try {
                     if (Backbone) {
                         if (!Backbone.History.started)
@@ -50,7 +50,7 @@ export function loadBackboneAppWithRequireJs(basePath, appOptions, scriptElement
                 if (appOptions.DependenciesJsPaths)
                     addDependencyScriptElements(basePath, appOptions.DependenciesJsPaths, reject);
                 //Load require js script
-                return addRequireJs(basePath, appOptions.AppPath, appOptions.RequireJsPath, appOptions.IsDataMain, reject);
+                return addRequireJs(basePath, appOptions.AppPath, appOptions.RequireJsPath, appOptions.IsDataMain, CleanUpRequireJsResources, reject);
             }
         }
 
@@ -59,7 +59,7 @@ export function loadBackboneAppWithRequireJs(basePath, appOptions, scriptElement
 }
 
 //Loads a backbone application using Backbone, Underscore (which is the only hard dependency of Backbone as per official documentation)
-export function loadAppWithBackboneJs(basePath, appOptions, scriptElementRef, callbackDomElementSetter) {
+export function loadAppWithBackboneJs(basePath, startBackboneHistory, CleanUpRequireJsResources, appOptions, scriptElementRef, callbackDomElementSetter) {
     return new Promise((resolve, reject) => {
 
         if (callbackDomElementSetter)
@@ -69,7 +69,7 @@ export function loadAppWithBackboneJs(basePath, appOptions, scriptElementRef, ca
 
         function loadApp() {
 
-            if (scriptElementRef && document.head.hasChildNodes(scriptElementRef)) {
+            if (startBackboneHistory && scriptElementRef && document.head.hasChildNodes(scriptElementRef)) {
                 try {
                     if (Backbone) {
                         if (!Backbone.History.started)
@@ -88,9 +88,9 @@ export function loadAppWithBackboneJs(basePath, appOptions, scriptElementRef, ca
                 if (appOptions.DependenciesJsPaths)
                     addDependencyScriptElements(basePath, appOptions.DependenciesJsPaths, reject);
                 //load backbone script
-                addScriptElement(basePath, appOptions.BackboneJsPath, reject);
+                addScriptElement(basePath, appOptions.BackboneJsPath, false, reject);
                 //Load app script
-                return addScriptElement(basePath, appOptions.AppPath, reject);
+                return addScriptElement(basePath, appOptions.AppPath, CleanUpRequireJsResources, reject);
             }
 
         }
@@ -100,7 +100,7 @@ export function loadAppWithBackboneJs(basePath, appOptions, scriptElementRef, ca
     });
 }
 
-export function loadAppSimple(basePath, appOptions, scriptElementRef, callbackDomElementSetter) {
+export function loadAppSimple(basePath, startBackboneHistory, CleanUpRequireJsResources, appOptions, scriptElementRef, callbackDomElementSetter) {
     return new Promise((resolve, reject) => {
 
         if (callbackDomElementSetter)
@@ -109,8 +109,7 @@ export function loadAppSimple(basePath, appOptions, scriptElementRef, callbackDo
         var script = loadApp();
 
         function loadApp() {
-
-            if (scriptElementRef && document.head.hasChildNodes(scriptElementRef)) {
+            if (startBackboneHistory && scriptElementRef && document.head.hasChildNodes(scriptElementRef)) {
                 try {
                     if (Backbone) {
                         if (!Backbone.History.started)
@@ -128,27 +127,8 @@ export function loadAppSimple(basePath, appOptions, scriptElementRef, callbackDo
                 //Load dependant scripts
                 if (appOptions.DependenciesJsPaths)
                     addDependencyScriptElements(basePath, appOptions.DependenciesJsPaths, reject);
-
-                var appPath = appOptions.AppPath;
-                const lengthAppPath = appPath.length;
-                if (lengthAppPath === 0) {
-                    reject(`appPath parameter cannot be empty`);
-                }
-                else {
-                    if (lengthAppPath > 1 && appPath.charAt(0) === '/') {
-                        appPath = basePath + appPath;
-                    }
-                    else {
-                        appPath = basePath + '/' + appPath;
-                    }
-                }
-
-                var scriptElementAppJs = document.createElement('script');
-                scriptElementAppJs.src = appPath;
-                scriptElementAppJs.onerror = reject;
-                document.head.appendChild(scriptElementAppJs);
-
-                return scriptElementAppJs;
+                //Load app script
+                return  addScriptElement(basePath, appOptions.AppPath, CleanUpRequireJsResources, reject);
             }
         }
 
@@ -157,7 +137,7 @@ export function loadAppSimple(basePath, appOptions, scriptElementRef, callbackDo
 }
 
 //Injects a require js script element to the DOM
-function addRequireJs(basePath, appPath, requireJsPath, isDataMain, reject) {
+function addRequireJs(basePath, appPath, requireJsPath, isDataMain, addCleanup, reject) {
 
     const lengthRequireJsPath = requireJsPath.length;
     if (lengthRequireJsPath === 0) {
@@ -185,6 +165,11 @@ function addRequireJs(basePath, appPath, requireJsPath, isDataMain, reject) {
         }
     }
 
+    if(addCleanup){
+        //Load cleanup script
+        addRequireJsLoadedResourcesCleanUpScript();
+    }
+
     var scriptElementRequireJs = document.createElement('script');
     scriptElementRequireJs.src = requireJsPath;
     if (isDataMain === true) {
@@ -210,7 +195,8 @@ function addDependencyScriptElements(basePath, vendorPaths, reject) {
     });
 }
 
-function addScriptElement(basePath, scriptPath, reject) {
+//Inject any generic script
+function addScriptElement(basePath, scriptPath, addCleanup, reject) {
 
     const lengthScriptPath = scriptPath.length;
     if (lengthScriptPath === 0) {
@@ -229,5 +215,38 @@ function addScriptElement(basePath, scriptPath, reject) {
     scriptElement.src = scriptPath;
     scriptElement.onerror = reject;
     document.head.appendChild(scriptElement);
+
+    if(addCleanup){
+        //Load cleanup script
+        addRequireJsLoadedResourcesCleanUpScript();
+    }
+
     return scriptElement;
+}
+
+//Injects the script required to unload any resources loaded by require js internally
+function addRequireJsLoadedResourcesCleanUpScript() {
+    var clearElement = document.head.querySelector("script#single-spa-backbone-clear-require-js-resources");
+    if (!clearElement) {
+        var scriptElement = document.createElement('script');
+        scriptElement.text = `
+        if(window.requirejs)
+        {
+            var all=[];
+            requirejs.onResourceLoad = function (context, map, depArray) {
+                all.push(map.name);    
+            };
+            function unloadRequireJsResources(){
+                all.map(function(item){
+                    requirejs.undef(item);
+                });
+            };
+        }
+        `;
+        scriptElement.id = "single-spa-backbone-clear-require-js-resources";
+        scriptElement.onerror = function() {
+            console.log("Reject");
+        };
+        document.head.appendChild(scriptElement);
+    }
 }

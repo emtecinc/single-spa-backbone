@@ -22,7 +22,7 @@
 
 import singleSpaBackbone from '../src/single-spa-backbone';
 
-describe(`test scope for single-spa-backbone`, () => {
+describe(`test scope for single-spa-backbone, for the configuration input parameter validation`, () => {
 
     let basePath = '/base';
     let appPath = 'appPath';
@@ -53,11 +53,18 @@ describe(`test scope for single-spa-backbone`, () => {
         expect(() => singleSpaBackbone({ BasePath: basePath, App: { AppPath: {} } })).toThrowError('App.AppPath parameter is required and expects a string value');
     });
 
+});
+
+describe(`test scope for single-spa-backbone, with require js cleanup disabled`, () => {
+
+    let basePath = '/base';
+    let appPath = 'appPath';
+
     test(`returns script element if valid props are passed to single spa backbone for simple app`, () => {
 
         let backboneJsPath = 'backboneJsPath';
         let expectedSrcPath = `http://localhost${basePath}/${appPath}`;
-        let options = { BasePath: basePath, AppWithBackboneJs: { AppPath: appPath, BackboneJsPath: backboneJsPath } };
+        let options = { BasePath: basePath, CleanUpRequireJsResources: false, AppWithBackboneJs: { AppPath: appPath, BackboneJsPath: backboneJsPath } };
         const lifeCycleSpa = singleSpaBackbone(options);
         return lifeCycleSpa
             .mount()
@@ -73,7 +80,7 @@ describe(`test scope for single-spa-backbone`, () => {
 
     test(`returns script element if valid props are passed to single spa backbone for data main app`, () => {
 
-        let options = { BasePath: basePath, AppWithRequire: { IsDataMain: true, AppPath: appPath, RequireJsPath: requireJsPath } };
+        let options = { BasePath: basePath, CleanUpRequireJsResources: false, AppWithRequire: { IsDataMain: true, AppPath: appPath, RequireJsPath: requireJsPath } };
         const lifeCycleSpa = singleSpaBackbone(options);
         return lifeCycleSpa
             .mount()
@@ -86,7 +93,7 @@ describe(`test scope for single-spa-backbone`, () => {
     test(`returns script element if valid props are passed to single spa backbone for data main app with require js path having leading forward slash`, () => {
 
         let inputRequireJsPath = `/${requireJsPath}`;
-        let options = { BasePath: basePath, AppWithRequire: { IsDataMain: true, AppPath: appPath, RequireJsPath: inputRequireJsPath } };
+        let options = { BasePath: basePath, CleanUpRequireJsResources: false, AppWithRequire: { IsDataMain: true, AppPath: appPath, RequireJsPath: inputRequireJsPath } };
         const lifeCycleSpa = singleSpaBackbone(options);
         return lifeCycleSpa
             .mount()
@@ -96,4 +103,34 @@ describe(`test scope for single-spa-backbone`, () => {
             });
     });
 
+});
+
+describe(`test scope for single-spa-backbone, with require js cleanup enabled`, () => {
+    
+    let basePath = '/base';
+    let appPath = 'appPath';
+
+    beforeEach(() => {
+        //assuming require js script will be loaded by the user of this plugin, mocking up requires js global object which get assigned to dom by require js
+        window.requirejs = {
+            onResourceLoad: function(){
+            
+            },
+            undef: function() {}
+        }
+
+    });
+
+    test(`returns script element if valid props are passed to single spa backbone for simple app`, () => {
+        let backboneJsPath = 'backboneJsPath';
+        let expectedSrcPath = `http://localhost${basePath}/${appPath}`;
+        let options = { BasePath: basePath, CleanUpRequireJsResources: true, AppWithBackboneJs: { AppPath: appPath, BackboneJsPath: backboneJsPath } };
+        const lifeCycleSpa = singleSpaBackbone(options);
+        return lifeCycleSpa
+            .mount()
+            .then((val) => {
+                expect(val).toBeInstanceOf(HTMLScriptElement);
+                expect(val).toMatchObject({ src: expectedSrcPath });
+            });
+    });
 });
